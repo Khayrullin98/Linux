@@ -1,0 +1,149 @@
+1. Создать файл file1 и наполнить его произвольным содержимым. Скопировать его в file2. Создать символическую ссылку file3 на file1. Создать жёсткую ссылку file4 на file1. Посмотреть, какие inode у файлов. Удалить file1. Что стало с остальными созданными файлами? Попробовать вывести их на экран.
+2. Дать созданным файлам другие, произвольные имена. Создать новую символическую ссылку. Переместить ссылки в другую директорию.
+3. Создать четыре произвольных файла. Первому присвоить права на чтение и запись для владельца и группы, только на чтение — для всех. Второму присвоить права на чтение и запись только для владельца. Сделать это в численном и символьном виде.
+
+
+marsel@marsel:~/cdek$ ls -l
+total 16
+-rw-rw-r-- 1 marsel marsel 3451 Sep 21 20:28 etc_err
+-rw-rw-r-- 1 marsel marsel 3229 Sep 21 20:35 etc_err_dir
+-rw-rw-r-- 1 marsel marsel  222 Sep 21 20:35 etc_err_file
+-rw-rw-r-- 1 marsel marsel  705 Sep 21 20:14 out
+
+marsel@marsel:~/cdek$ touch file1                                    # Создал file1
+marsel@marsel:~/cdek$ cp file1 file2                                 # Скопировал file1 в file2
+marsel@marsel:~/cdek$ ln -s file1 link_to_file1 -> file1             # Сделал симлинк link_to_file1 в file1
+marsel@marsel:~/cdek$ ln file1 hardlink_to_file1                     # Сделал хардлинк hardlink_to_file1 в file1
+marsel@marsel:~/cdek$ ls -l
+-rw-rw-r-- 1 marsel marsel 3451 Sep 21 20:28 etc_err
+-rw-rw-r-- 1 marsel marsel 3229 Sep 21 20:35 etc_err_dir
+-rw-rw-r-- 1 marsel marsel  222 Sep 21 20:35 etc_err_file
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 file1
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 22:26 file2
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 hardlink_to_file1
+lrwxrwxrwx 1 marsel marsel    5 Sep 21 22:26 link_to_file1 -> file1
+-rw-rw-r-- 1 marsel marsel  705 Sep 21 20:14 out
+
+marsel@marsel:~/cdek$ stat file1
+  File: file1
+Device: fd00h/64768d    Inode: 400701      Links: 2
+marsel@marsel:~/cdek$ stat file2
+  File: file2
+Device: fd00h/64768d    Inode: 401979      Links: 1
+marsel@marsel:~/cdek$ stat hardlink_to_file1
+  File: hardlink_to_file1
+Device: fd00h/64768d    Inode: 400701      Links: 2                      # То, что hardlink_to_file1 является хардлинком file1 говорит одинаковая айнода Inode: 400701
+marsel@marsel:~/cdek$ stat link_to_file1
+  File: link_to_file1 -> file1
+Device: fd00h/64768d    Inode: 401980      Links: 1                      # То, что link_to_file1 является симлинком file1 говорит значок "->" и первая буква l в правах lrwxrwxrwx
+
+marsel@marsel:~/cdek$ ls -l
+total 16
+-rw-rw-r-- 1 marsel marsel 3451 Sep 21 20:28 etc_err
+-rw-rw-r-- 1 marsel marsel 3229 Sep 21 20:35 etc_err_dir
+-rw-rw-r-- 1 marsel marsel  222 Sep 21 20:35 etc_err_file
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 file1
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 22:26 file2
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 hardlink_to_file1
+lrwxrwxrwx 1 marsel marsel    5 Sep 21 22:26 link_to_file1 -> file1
+-rw-rw-r-- 1 marsel marsel  705 Sep 21 20:14 out
+marsel@marsel:~/cdek$ mkdir links                                         # создал директорию links в директории cdek
+marsel@marsel:~/cdek$ ls -l
+total 20
+-rw-rw-r-- 1 marsel marsel 3451 Sep 21 20:28 etc_err
+-rw-rw-r-- 1 marsel marsel 3229 Sep 21 20:35 etc_err_dir
+-rw-rw-r-- 1 marsel marsel  222 Sep 21 20:35 etc_err_file
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 file1
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 22:26 file2
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 hardlink_to_file1
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 22:33 links
+lrwxrwxrwx 1 marsel marsel    5 Sep 21 22:26 link_to_file1 -> file1
+-rw-rw-r-- 1 marsel marsel  705 Sep 21 20:14 out
+marsel@marsel:~/cdek$ mv link_to_file1 links                              # Переместил файл c симлинком в директорию links
+marsel@marsel:~/cdek$ ls -l
+total 20
+-rw-rw-r-- 1 marsel marsel 3451 Sep 21 20:28 etc_err
+-rw-rw-r-- 1 marsel marsel 3229 Sep 21 20:35 etc_err_dir
+-rw-rw-r-- 1 marsel marsel  222 Sep 21 20:35 etc_err_file
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 file1
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 22:26 file2
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 hardlink_to_file1
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 22:33 links
+-rw-rw-r-- 1 marsel marsel  705 Sep 21 20:14 out
+marsel@marsel:~/cdek$ cd links                                            # Зашел в директорию links
+marsel@marsel:~/cdek/links$ ls -l
+total 0
+lrwxrwxrwx 1 marsel marsel 5 Sep 21 22:26 link_to_file1 -> file1                  # Симлинк link_to_file1 -> file1 горит красным, ссылка сломалась
+marsel@marsel:~/cdek/links$ ln -s /home/marsel/cdek/file1 new_link_to_file1       # Создал новый симлинк new_link_to_file1 для файла file1 , который находится в вышестоящем каталоге
+marsel@marsel:~/cdek/links$ ls -l
+total 0
+lrwxrwxrwx 1 marsel marsel  5 Sep 21 22:26 link_to_file1 -> file1                              # Симлинк link_to_file1 -> file1 горит красным, ссылка сломалась
+lrwxrwxrwx 1 marsel marsel 23 Sep 21 22:35 new_link_to_file1 -> /home/marsel/cdek/file1        # Симлинк new_link_to_file1 горит синим, ссылка работает
+marsel@marsel:~/cdek/links$ cd ../
+marsel@marsel:~/cdek$ ls -l
+total 20
+-rw-rw-r-- 1 marsel marsel 3451 Sep 21 20:28 etc_err
+-rw-rw-r-- 1 marsel marsel 3229 Sep 21 20:35 etc_err_dir
+-rw-rw-r-- 1 marsel marsel  222 Sep 21 20:35 etc_err_file
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 file1
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 22:26 file2
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 hardlink_to_file1
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 22:35 links
+-rw-rw-r-- 1 marsel marsel  705 Sep 21 20:14 out
+
+
+
+3. Создать четыре произвольных файла. Первому присвоить права на чтение и запись для владельца и группы, только на чтение — для всех. Второму присвоить права на чтение и запись только для владельца. Сделать это в численном и символьном виде.
+
+
+marsel@marsel:~/cdek$ ls -l
+total 20
+-rw-rw-r-- 1 marsel marsel 3451 Sep 21 20:28 etc_err
+-rw-rw-r-- 1 marsel marsel 3229 Sep 21 20:35 etc_err_dir
+-rw-rw-r-- 1 marsel marsel  222 Sep 21 20:35 etc_err_file
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 file1
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 22:26 file2
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 hardlink_to_file1
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 22:35 links
+-rw-rw-r-- 1 marsel marsel  705 Sep 21 20:14 out
+marsel@marsel:~/cdek$ touch f1_chislennuy                               # Создал файл, в котором присвою права на чтение и запись для владельца и группы, только на чтение — для всех численным методом
+marsel@marsel:~/cdek$ touch f1_simvolniy                                # Создал файл, в котором присвою права на чтение и запись для владельца и группы, только на чтение — для всех символьным методом
+marsel@marsel:~/cdek$ touch f2_chislennuy                               # Создал файл, в котором присвою права на чтение и запись только для владельца численным методом
+marsel@marsel:~/cdek$ touch f2_simvolniy                                # Создал файл, в котором присвою права на чтение и запись только для владельца символьным методом
+marsel@marsel:~/cdek$ chmod a-rwx f1_chislennuy                               
+marsel@marsel:~/cdek$ chmod a-rwx f2_chislennuy
+marsel@marsel:~/cdek$ chmod a-rwx f1_simvolniy                          # Забрал все права у всех
+marsel@marsel:~/cdek$ chmod a-rwx f2_simvolniy
+marsel@marsel:~/cdek$ ls -l
+total 20
+-rw-rw-r-- 1 marsel marsel 3451 Sep 21 20:28 etc_err
+-rw-rw-r-- 1 marsel marsel 3229 Sep 21 20:35 etc_err_dir
+-rw-rw-r-- 1 marsel marsel  222 Sep 21 20:35 etc_err_file
+---------- 1 marsel marsel    0 Sep 21 22:54 f1_chislennuy
+---------- 1 marsel marsel    0 Sep 21 22:54 f1_simvolniy
+---------- 1 marsel marsel    0 Sep 21 22:55 f2_chislennuy              # Действительно никаких прав ни у кого нет
+---------- 1 marsel marsel    0 Sep 21 22:55 f2_simvolniy
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 file1
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 22:26 file2
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 hardlink_to_file1
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 22:35 links
+-rw-rw-r-- 1 marsel marsel  705 Sep 21 20:14 out
+marsel@marsel:~/cdek$ chmod u+rw,g+rw,o+r f1_simvolniy
+marsel@marsel:~/cdek$ chmod 664 f1_chislennuy                            # Присваиваю права нужным способом
+marsel@marsel:~/cdek$ chmod u+rw f2_simvolniy
+marsel@marsel:~/cdek$ chmod 600 f2_chislennuy
+marsel@marsel:~/cdek$ ls -l
+total 20
+-rw-rw-r-- 1 marsel marsel 3451 Sep 21 20:28 etc_err
+-rw-rw-r-- 1 marsel marsel 3229 Sep 21 20:35 etc_err_dir
+-rw-rw-r-- 1 marsel marsel  222 Sep 21 20:35 etc_err_file
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 22:54 f1_chislennuy
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 22:54 f1_simvolniy
+-rw------- 1 marsel marsel    0 Sep 21 22:55 f2_chislennuy               # Готово
+-rw------- 1 marsel marsel    0 Sep 21 22:55 f2_simvolniy
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 file1
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 22:26 file2
+-rw-rw-r-- 2 marsel marsel    0 Sep 21 22:26 hardlink_to_file1
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 22:35 links
+-rw-rw-r-- 1 marsel marsel  705 Sep 21 20:14 out
+marsel@marsel:~/cdek$

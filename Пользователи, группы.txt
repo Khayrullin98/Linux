@@ -1,0 +1,45 @@
+ДЗ 2
+
+1. Управление пользователями:
+a) создать пользователя, используя утилиту useradd;
+b) удалить пользователя, используя утилиту userdel;
+c) создать пользователя в ручном режиме.
+
+2. Управление группами:
+a) создать группу с использованием утилит и в ручном режиме;
+b) попрактиковаться в смене групп у пользователей;
+c) добавить пользователя в группу, не меняя основной.
+d) удалить пользователя из группы.
+
+
+marsel@marsel:~/cdek$ less /etc/group             #Здесь хранится информация о пользователях
+marsel@marsel:~/cdek$ sudo less /etc/shadow       #Здесь хранятся хеши паролей
+[sudo] password for marsel:
+marsel@marsel:~/cdek$ sudo -i                     #Сменил пользователя на root
+root@marsel:~# whoami
+root
+root@marsel:~# id
+uid=0(root) gid=0(root) groups=0(root)            #Узнал, в каких группах состоит root
+root@marsel:~# su marsel                          #Сменил пользователя на marsel
+marsel@marsel:/root$ whoami
+marsel
+marsel@marsel:/root$ id
+uid=1000(marsel) gid=1000(marsel) groups=1000(marsel),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),108(lxd)
+marsel@marsel:/root$ cd /home/marsel/cdek
+marsel@marsel:~/cdek$ type -a cd
+cd is a shell builtin                             #Значит команда cd, встроенная в оболочку команда.
+marsel@marsel:~/cdek$ type -a sudo
+sudo is /usr/bin/sudo                                                                #То есть когда я ввожу команду sudo - у меня исполняется вот такой файл /usr/bin/sudo, команда sudo имеет свой файл конфигурации, который находится здесь: /etc/sudoers
+marsel@marsel:~/cdek$ sudo useradd -s /bin/bash/ -d /home/cdekuser1 -m cdekuser1     #Создал пользователя с именем cdekuser1, в качестве оболочки установлен bash, а домашний каталог это /home/cdekuser1
+marsel@marsel:~/cdek$ id cdekuser1
+uid=1003(cdekuser1) gid=1004(cdekuser1) groups=1004(cdekuser1)
+marsel@marsel:~/cdek$ sudo groupadd cdekGroup                                        #Создал группу с названием cdekGroup 
+marsel@marsel:~/cdek$ sudo usermod -a -G cdekGroup cdekuser1                         #Добавил пользователя cdekuser1 в группу cdekGroup не удаляя из основной группы
+marsel@marsel:~/cdek$ id cdekuser1
+uid=1003(cdekuser1) gid=1004(cdekuser1) groups=1004(cdekuser1),1005(cdekGroup)
+marsel@marsel:~/cdek$ sudo gpasswd -d cdekuser1 cdekGroup
+Removing user cdekuser1 from group cdekGroup                                         #Удалил пользователя cdekuser1 из группы cdekGroup
+marsel@marsel:~/cdek$ sudo userdel cdekuser1
+[sudo] password for marsel:
+marsel@marsel:~/cdek$ sudo groupdel cdekGroup                                        #Удалил пользователя cdekuser1 из группы cdekGroup
+marsel@marsel:~/cdek$

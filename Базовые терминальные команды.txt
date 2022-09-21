@@ -1,0 +1,80 @@
+ДЗ 1.
+
+1. Навигация по файловой системе. Попрактиковаться в перемещении между каталогами, используя полный и относительный путь. Перечислить, какие параметры команды cd позволят быстро вернуться в домашний каталог, позволят перейти на уровень выше.
+2. Управление файлами и каталогами и текстовые редакторы. Создать файл с наполнением, используя несколько способов. Использовать разобранные текстовые редакторы для наполнения файлов данными. Создать копии созданных файлов, создать несколько каталогов с подкаталогами, перенести несколько файлов в созданные каталоги. Перечислить команды и используемые параметры команд.
+3. * Используя дополнительный материал, настроить авторизацию по SSH с использованием ключей.
+
+
+marsel@marsel:~/cdek$ pwd
+/home/marsel/cdek
+marsel@marsel:~/cdek$ mkdir d1
+marsel@marsel:~/cdek$ mkdir d2
+marsel@marsel:~/cdek$ touch file1
+marsel@marsel:~/cdek$ touch file2
+marsel@marsel:~/cdek$ > file3
+marsel@marsel:~/cdek$ cd d1
+marsel@marsel:~/cdek/d1$ touch f1
+marsel@marsel:~/cdek/d1$ mkdir d2
+marsel@marsel:~/cdek/d1$ ls -l
+total 4
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 19:03 d2
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:01 f1
+marsel@marsel:~/cdek/d1$ cd d2
+marsel@marsel:~/cdek/d1/d2$ ls -l
+total 0
+marsel@marsel:~/cdek/d1/d2$ cd ../
+marsel@marsel:~/cdek/d1$ mkdir d1
+marsel@marsel:~/cdek/d1$ cd d1
+marsel@marsel:~/cdek/d1/d1$ touch f1
+marsel@marsel:~/cdek/d1/d1$ cd ../
+marsel@marsel:~/cdek/d1$ ls -l
+total 8
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 19:12 d1
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 19:03 d2
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:01 f1
+marsel@marsel:~/cdek/d1$ rm f1
+marsel@marsel:~/cdek/d1$ rmdir d2
+marsel@marsel:~/cdek/d1$ rm -r d1
+marsel@marsel:~/cdek/d1$ ls -l
+total 0
+marsel@marsel:~/cdek/d1$ cd ../
+marsel@marsel:~/cdek$ ls -l
+total 8
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 19:13 d1
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 18:59 d2
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:00 file1
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:00 file2
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:00 file3
+marsel@marsel:~/cdek$ cp file1 file4
+marsel@marsel:~/cdek$ ls -l
+total 8
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 19:13 d1
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 18:59 d2
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:00 file1
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:00 file2
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:00 file3
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:16 file4
+marsel@marsel:~/cdek$ cp -r d1 d3
+marsel@marsel:~/cdek$ ls -l
+total 12
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 19:13 d1
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 18:59 d2
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 19:16 d3
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:00 file1
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:00 file2
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:00 file3
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:16 file4
+marsel@marsel:~/cdek$ mv file1 d1
+marsel@marsel:~/cdek$ ls -l
+total 12
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 19:16 d1
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 18:59 d2
+drwxrwxr-x 2 marsel marsel 4096 Sep 21 19:16 d3
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:00 file2
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:00 file3
+-rw-rw-r-- 1 marsel marsel    0 Sep 21 19:16 file4
+marsel@marsel:~/cdek$ nano file2
+marsel@marsel:~/cdek$ cat file2
+Test zapis 1
+marsel@marsel:~/cdek$ cd /home/marsel/cdek/d1
+marsel@marsel:~/cdek/d1$

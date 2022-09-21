@@ -1,0 +1,152 @@
+1. Создать скрипт с базовыми терминальными командами
+2. Создать однострочный скрипт, который создаст директории для нескольких годов (2010–2017), в них — поддиректории для месяцев (от 01 до 12), и в каждый из них запишет несколько файлов с произвольными записями. Например, 001.txt, содержащий текст «Файл 001», 002.txt с текстом «Файл 002» и т. д.
+3. Использовать команду AWK на вывод длинного списка каталога, чтобы отобразить только права доступа к файлам. Затем отправить в конвейере этот вывод на sort и uniq, чтобы отфильтровать все повторяющиеся строки.
+
+
+1.
+#!/bin/bash
+pwd
+ls -l
+cd 
+ls -l
+pwd
+cd
+cd marsel
+pwd
+echo END
+
+
+2.
+mkdir {2017..2022}        создаст каталоги с 2017 по 2022
+mkdir {2017..2022}/{01..12}       создаст каталоги с 2017 по 2022 и в них подкаталоги с 01 по 12
+touch {2017..2022}/{01..12}/file{1..3}.txt       создаст каталоги с 2017 по 2022 и в них подкаталоги с 01 по 12 и в них файлы от 1 до 3.
+Здесь мы управились за 3 команды. Но можно за 2. Вот так:
+mkdir -p {2017..2022}/{01..12}
+p - значит parent. То есть родительской директории нет, тогда создать. Если нет - ничего не делать.
+
+Затем создаем файлы.
+touch {2017..2022}/{01..12}/file{1..3}.txt
+
+НО вообще мы можем уместить всё в одну строку.
+mkdir -p {2017..2022}/{01..12} && touch {2017..2022}/{01..12}/file{1..3}.txt
+
+Делаем заготовку:
+#!/bin/bash
+for y in {2017…2022}
+do
+echo $y
+done
+
+То есть я говорю: Переменной y поочередно присваивать значение с 2017 по 2022, и далее (между do и done - тело цикла) выполнять то, что написано в цикле.
+
+В этом скрипте будет 3 цикла, вложенных друг в друга. Это был первый цикл. Делаем второй. Второй цикл будет отвечать за переменные, на основании которых мы будем создавать подкаталоги с номерами месяцов. Делаем заготовку.
+
+#!/bin/bash
+
+for y in {2017…2022}
+
+do
+
+     echo $y
+
+     for m in {01..12}
+
+     do
+
+         echo $m
+
+      done
+
+   done
+
+Делаем 3 подцикл.
+
+#!/bin/bash
+
+for y in {2017…2022}
+
+do
+
+   echo $y
+
+   for m in {01..12}
+
+   do
+
+      echo $m
+
+      for f in {1..5}
+
+      do
+
+      echo $f
+
+      done
+
+   done
+
+done
+
+Заготовка готова, идем далее, осталось заменить команды echo.
+
+#!/bin/bash
+
+for y in {2017…2022}
+
+do
+
+    mkdir $y
+
+    for m in {01..12}
+
+    do
+
+       mkdir  $y/$m
+
+       for f in {1..5}
+
+       do
+
+       echo file$f.txt > $y/$m/file$f.txt
+
+       done
+
+    done
+
+done
+
+Теперь всё нужно написать в одну строчку. Для этого используем “;”.
+
+for y in {2017..2022}; do mkdir $y; for m in {01..12}; mkdir  $y/$m; for f in {1..5}; do echo file$f.txt > $y/$m/file$f.txt; done; done; done
+
+
+
+3.
+marsel@marsel:~$ ls -l
+total 64
+-rw-rw-r-- 1 marsel marsel  1618 Aug  2 21:30  all
+drwxrwxr-x 3 marsel marsel  4096 Sep 21 23:36  cdek
+drwxrwxr-x 3 marsel marsel  4096 Aug  7 07:22  d3
+drwxrwxr-x 2 marsel marsel  4096 Aug  7 07:31  d4
+lrwxrwxrwx 1 marsel marsel     2 Aug  7 08:15  d_sl -> d4
+-rw-rw-r-- 1 marsel marsel    51 Aug  2 21:30  err
+-rw-rw-r-- 1 marsel marsel 10139 Aug  2 22:47  etc_all
+-rw-rw-r-- 1 marsel marsel  3385 Aug  2 22:30  etc_err
+-rw-rw-r-- 1 marsel marsel  3163 Aug  2 22:38  etc_err_dir
+-rw-rw-r-- 1 marsel marsel   222 Aug  2 22:40  etc_err_file
+-rw-rw-r-- 1 marsel marsel    11 Aug  3 22:22  file1
+-rw-rw-r-- 1 marsel marsel     0 Jul 24 23:52  file2
+-rw-rw-r-- 1 marsel marsel     0 Aug  2 22:16  file3
+-rw-rw-rw- 1 marsel marsel     0 Aug 12 23:22  file4
+lrwxrwxrwx 1 marsel marsel     5 Aug  7 08:15  file_ls -> file1
+-rw-rw-r-- 1 marsel marsel  1564 Aug  2 21:28  out
+drwx-wx--x 3 marsel marsel  4096 Aug 14 06:08  sasha
+-rw-rw-r-- 1 marsel marsel    37 Jul 27 19:46 'smotret 1'
+-rw-rw-r-- 1 marsel marsel    45 Jul 27 19:42  writefile1
+
+marsel@marsel:~$ ls -l /home/marsel | awk '{print $1}' | cut -c 2-10 | sort | uniq | tail -n+2
+rw-rw-r--
+rw-rw-rw-
+rwxrwxrwx
+rwxrwxr-x
+rwx-wx--x
